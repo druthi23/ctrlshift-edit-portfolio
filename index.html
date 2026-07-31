@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ctrlshift.edit — Video Editor Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --font-block: 'Press Start 2P', monospace;
+  --font-body: 'Space Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --pixel: 4px;
+}
+
+[data-theme="obsidian"]{
+  --sky-top: #060508;
+  --sky-bot: #120E16;
+  --bg-0: #120E16;
+  --panel: #1D1720;
+  --panel-dark: #0E0A12;
+  --wood: #35201C;
+  --wood-dark: #211311;
+  --stone: #302A38;
+  --stone-dark: #1A1620;
+  --ink: #F1E9EC;
+  --ink-soft: #B7A8B8;
+  --paper: #F1E9EC;
+  --accent: #D8362B;
+  --accent-dark: #9E2019;
+  --accent-glow: rgba(216,54,43,0.55);
+  --gold: #E3B341;
+  --gold-dark: #A9812A;
+  --shadow-block: rgba(0,0,0,0.55);
+}
+
+[data-theme="end"]{
+  --sky-top: #E7DEF5;
+  --sky-bot: #D6C4EE;
+  --bg-0: #EDE6F5;
+  --panel: #F6F1FC;
+  --panel-dark: #CDB9E9;
+  --wood: #B79CDB;
+  --wood-dark: #8B6BC0;
+  --stone: #D6CBE8;
+  --stone-dark: #AFA0CC;
+  --ink: #241B33;
+  --ink-soft: #5A4B78;
+  --paper: #FBF8FF;
+  --accent: #7B3FE4;
+  --accent-dark: #5A28B5;
+  --accent-glow: rgba(123,63,228,0.35);
+  --gold: #D9A63A;
+  --gold-dark: #A97E24;
+  --shadow-block: rgba(90,70,120,0.35);
+}
+
+*{ box-sizing: border-box; }
+html{ scroll-behavior: smooth; }
+
+body{
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--bg-0);
+  color: var(--ink);
+  transition: background 0.4s ease, color 0.4s ease;
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation: none !important; transition: none !important; }
+  html{ scroll-behavior: auto; }
+}
+
+img{ max-width: 100%; display: block; }
+a{ color: inherit; text-decoration: none; }
+
+.wrap{ max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+.nav{
+  position: sticky; top: 0; z-index: 50;
+  background: var(--panel-dark);
+  border-bottom: var(--pixel) solid var(--ink);
+  box-shadow: 0 4px 0 var(--shadow-block);
+}
+.nav-inner{
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px; max-width: 1120px; margin: 0 auto;
+}
+.brand{
+  font-family: var(--font-block); font-size: 13px; color: var(--paper);
+  letter-spacing: 1px; display: flex; align-items: center; gap: 10px;
+}
+.brand-swatch{
+  width: 18px; height: 18px; background: var(--accent);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.3), inset 0 -2px 0 rgba(0,0,0,0.3), 0 0 8px var(--accent-glow);
+}
+.nav-links{ display: flex; gap: 22px; font-family: var(--font-mono); font-size: 13px; color: var(--paper); }
+.nav-links a{ opacity: 0.85; }
+.nav-links a:hover{ opacity: 1; color: var(--accent); }
+
+.lever-btn{
+  display: flex; align-items: center; gap: 8px;
+  background: var(--wood-dark); border: none; padding: 8px 12px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 11px; color: var(--paper);
+  box-shadow: inset 0 3px 0 rgba(255,255,255,0.12), inset 0 -3px 0 rgba(0,0,0,0.35);
+}
+.lever-btn:hover{ filter: brightness(1.2); }
+.lever-track{ width: 30px; height: 14px; background: var(--stone-dark); position: relative; box-shadow: inset 0 2px 0 rgba(0,0,0,0.4); }
+.lever-knob{
+  width: 12px; height: 12px; background: var(--accent); position: absolute; top: 1px; left: 1px;
+  transition: left 0.25s ease, background 0.25s ease; box-shadow: 0 0 6px var(--accent-glow);
+}
+[data-theme="end"] .lever-knob{ left: 17px; }
+
+.hero{
+  padding: 84px 24px 60px;
+  text-align: center;
+  position: relative;
+  background: radial-gradient(ellipse 80% 100% at 50% 0%, var(--sky-top) 0%, var(--bg-0) 75%);
+}
+.hero-eyebrow{ font-family: var(--font-mono); font-size: 12px; letter-spacing: 3px; color: var(--ink-soft); margin-bottom: 22px; }
+.hero-eyebrow::before{ content: "> "; color: var(--accent); }
+
+.block-title{ display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0 auto 26px; max-width: 900px; }
+.block-letter{
+  font-family: var(--font-block); font-size: clamp(22px, 5.6vw, 46px);
+  line-height: 1.1; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 14px 10px 10px; background: var(--panel); color: var(--ink);
+  box-shadow:
+    inset 0 6px 0 rgba(255,255,255,0.12),
+    inset 0 -6px 0 rgba(0,0,0,0.4),
+    0 6px 0 var(--panel-dark),
+    0 10px 14px var(--shadow-block);
+  text-shadow: 0 2px 0 rgba(0,0,0,0.24);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.4s ease;
+  user-select: none; cursor: default;
+}
+.block-letter.accent{
+  background: var(--accent); color: var(--paper);
+  box-shadow:
+    inset 0 6px 0 rgba(255,255,255,0.2),
+    inset 0 -6px 0 rgba(0,0,0,0.35),
+    0 6px 0 var(--accent-dark),
+    0 10px 18px var(--accent-glow);
+}
+.block-letter:hover{ transform: translateY(-6px); box-shadow: inset 0 6px 0 rgba(255,255,255,0.12), inset 0 -6px 0 rgba(0,0,0,0.4), 0 12px 0 var(--panel-dark), 0 20px 18px var(--shadow-block); }
+.block-letter.accent:hover{ box-shadow: inset 0 6px 0 rgba(255,255,255,0.2), inset 0 -6px 0 rgba(0,0,0,0.35), 0 12px 0 var(--accent-dark), 0 22px 26px var(--accent-glow); }
+
+.hero-sub{ font-size: 17px; color: var(--ink-soft); max-width: 560px; margin: 0 auto 34px; line-height: 1.6; }
+.hero-sub strong{ color: var(--accent); }
+
+.hero-ctas{ display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+.btn{
+  font-family: var(--font-mono); font-weight: 700; font-size: 13px; letter-spacing: 0.5px;
+  padding: 14px 22px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  box-shadow: 0 5px 0 var(--shadow-block); transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+}
+.btn:active{ transform: translateY(4px); box-shadow: 0 1px 0 var(--shadow-block); }
+.btn-primary{ background: var(--accent); color: var(--paper); }
+.btn-primary:hover{ filter: brightness(1.12); }
+.btn-outline{ background: var(--paper); color: var(--accent); border: var(--pixel) solid var(--accent); box-shadow: 0 5px 0 var(--accent-dark); }
+.btn-outline:hover{ filter: brightness(1.04); color: var(--accent-dark); border-color: var(--accent-dark); }
+
+.section{ padding: 70px 24px; }
+.section-head{ text-align: center; margin-bottom: 44px; }
+.section-tag{
+  font-family: var(--font-block); font-size: 10px; color: var(--paper); background: var(--accent);
+  display: inline-block; padding: 8px 12px; box-shadow: 0 4px 0 var(--accent-dark); margin-bottom: 18px;
+}
+.section-title{ font-family: var(--font-block); font-size: clamp(18px, 3vw, 26px); color: var(--ink); line-height: 1.6; }
+.section-desc{ font-family: var(--font-body); color: var(--ink-soft); max-width: 520px; margin: 14px auto 0; font-size: 15px; line-height: 1.6; }
+
+.stats-grid{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1000px; margin: 0 auto; }
+@media (max-width: 860px){ .stats-grid{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 480px){ .stats-grid{ grid-template-columns: 1fr; } }
+
+.stat-card{
+  background: var(--panel); padding: 26px 18px; text-align: center;
+  box-shadow: inset 0 4px 0 rgba(255,255,255,0.08), inset 0 -4px 0 rgba(0,0,0,0.35), 0 6px 0 var(--panel-dark);
+}
+.stat-icon{ font-size: 26px; margin-bottom: 10px; }
+.stat-value{ font-family: var(--font-mono); font-weight: 700; font-size: 28px; color: var(--accent); }
+.stat-label{ font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); margin-top: 6px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+.pulse-dot{
+  display: inline-block; width: 8px; height: 8px; background: var(--accent); border-radius: 50%;
+  margin-right: 6px; animation: pulse 1.4s infinite; vertical-align: middle;
+}
+@keyframes pulse{
+  0%{ box-shadow: 0 0 0 0 var(--accent-glow); }
+  70%{ box-shadow: 0 0 0 8px rgba(216,54,43,0); }
+  100%{ box-shadow: 0 0 0 0 rgba(216,54,43,0); }
+}
+
+.tabs{ display: flex; justify-content: center; gap: 10px; margin-bottom: 36px; flex-wrap: wrap; }
+.tab-btn{
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700; padding: 10px 16px;
+  background: var(--panel); color: var(--ink-soft); border: none; cursor: pointer; box-shadow: 0 4px 0 var(--panel-dark);
+}
+.tab-btn.active{ background: var(--accent); color: var(--paper); box-shadow: 0 4px 0 var(--accent-dark); }
+.tab-btn:hover:not(.active){ filter: brightness(1.15); }
+
+.work-grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 860px){ .work-grid{ grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px){ .work-grid{ grid-template-columns: 1fr; } }
+
+/* FIX 1: prevent grid blowout — grid items default to a min-width equal
+   to their content's intrinsic width (min-width: auto). A wide child,
+   like Instagram's embed widget below, can force the whole column (and
+   therefore the page) wider than the viewport. Since body has
+   overflow-x: hidden, that excess width gets silently clipped instead
+   of shown — which is what made cards "disappear" on small screens. */
+.work-grid > *{ min-width: 0; }
+.work-embed, .work-body{ min-width: 0; }
+
+.wrap-wide{
+max-width:1400px;
+margin:auto;
+padding:0 32px;
+}
+
+
+/* .cinema-shell{
+position:relative;
+margin-top:40px;
+padding:32px;
+border-radius:28px;
+overflow:hidden;
+background:rgba(216,54,43,.08);
+backdrop-filter:blur(18px);
+border:1px solid rgba(216,54,43,.18);
+box-shadow:
+0 20px 60px rgba(0,0,0,.35);
+} */
+
+.cinema-shell{
+position:relative;
+margin-top:40px;
+padding:34px;
+border-radius:30px;
+overflow:hidden;
+transition:.35s;
+backdrop-filter:blur(22px);
+-webkit-backdrop-filter:blur(22px);
+}
+
+/* OBSIDIAN THEME */
+
+[data-theme="obsidian"] .cinema-shell{
+background:rgba(216,54,43,.08);
+border:1px solid rgba(216,54,43,.18);
+box-shadow:
+0 20px 60px rgba(0,0,0,.45);
+}
+
+/* END THEME */
+
+[data-theme="end"] .cinema-shell{
+background:rgba(123,63,228,.12);
+border:1px solid rgba(123,63,228,.25);
+box-shadow:
+0 20px 60px rgba(123,63,228,.18);
+}
+
+
+.cinema-row{
+display:flex;
+gap:28px;
+overflow-x:auto;
+scroll-snap-type:x mandatory;
+scroll-behavior:smooth;
+padding:8px;
+scrollbar-width:none;
+}
+
+
+.cinema-row::-webkit-scrollbar{
+display:none;
+}
+
+.cinema-card{
+position:relative;
+overflow:hidden;
+}
+
+.cinema-card::before{
+content:"";
+position:absolute;
+inset:0;
+border-radius:22px;
+border:1px solid rgba(255,255,255,.06);
+pointer-events:none;
+}
+
+.cinema-card:hover{
+transform:translateY(-10px);
+}
+
+.cinema-thumb{
+aspect-ratio:16/9;
+overflow:hidden;
+.cinema-thumb::after{
+content:"";
+position:absolute;
+left:0;
+right:0;
+bottom:0;
+height:45%;
+background:linear-gradient(
+transparent,
+rgba(0,0,0,.55)
+);
+pointer-events:none;
+}
+}
+
+
+.cinema-thumb img{
+width:100%;
+height:100%;
+object-fit:cover;
+transition:.4s;
+}
+
+.cinema-card:hover img{
+transform:scale(1.05);
+}
+
+.cinema-body{
+padding:18px;
+}
+
+.cinema-title{
+font-size:17px;
+font-weight:700;
+margin-bottom:8px;
+}
+
+.cinema-meta{
+font-size:13px;
+opacity:.75;
+}
+
+.carousel-btn{
+position:absolute;
+top:50%;
+transform:translateY(-50%);
+width:52px;
+height:52px;
+border:none;
+cursor:pointer;
+border-radius:50%;
+background:rgba(20,20,20,.75);
+color:white;
+font-size:22px;
+z-index:5;
+}
+.carousel-btn.left{
+left:16px;
+}
+
+.carousel-btn.right{
+right:16px;
+}
+
+.carousel-btn:hover{
+background:var(--accent);
+}
+
+.work-card{
+  background: var(--panel);
+  box-shadow: inset 0 4px 0 rgba(255,255,255,0.06), inset 0 -4px 0 rgba(0,0,0,0.35), 0 6px 0 var(--panel-dark);
+  overflow: hidden; display: none; flex-direction: column; transition: transform 0.15s ease;
+}
+.work-card.show{ display: flex; }
+.work-card:hover{ transform: translateY(-4px); }
+
+/* FIX 3: explicit max-width + overflow:hidden as a local safety net,
+   so any oversized embed content is contained inside its own card
+   instead of relying solely on body's overflow-x. */
+.work-embed{ position: relative; width: 100%; max-width: 100%; background: var(--stone-dark); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.work-embed.ratio-16-9{ aspect-ratio: 16/9; }
+.work-embed.ratio-9-16{ aspect-ratio:9/16; max-height:420px; width:100%; }
+.work-embed iframe{ width: 100%; height: 100%; border: 0; display: block; }
+
+/* Instagram's own embed widget renders its own thumbnail + play button.
+   We just give it room to breathe -- no overlays, no gradients. */
+.work-embed.ig-embed-wrap{
+  aspect-ratio: auto;
+  min-height: 300px;
+  background: transparent;
+  padding: 8px 0;
+}
+/* FIX 2: Instagram's widget sets an inline min-width (~326px) on the
+   blockquote it renders, which is wider than many phone screens minus
+   padding. Overriding it lets the embed actually shrink to fit. */
+.work-embed.ig-embed-wrap .instagram-media{
+  margin: 0 auto !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Clean clickable thumbnail card -- just the image, a small play badge,
+   nothing else. Used when a `thumbnail` image is supplied in CONFIG. */
+.work-thumb-link{
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.work-thumb-link img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.work-thumb-link .play-badge{
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 34px;
+  height: 34px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  border-radius: 3px;
+}
+
+/* ---------- Cinema Play Badge ---------- */
+.cinema-thumb .play-badge{
+position:absolute;
+right:14px;
+bottom:14px;
+width:38px;
+height:38px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:50%;
+font-size:14px;
+font-weight:700;
+transition:.3s;
+backdrop-filter:blur(12px);
+z-index:2;
+}
+
+/* OBSIDIAN */
+
+[data-theme="obsidian"] .cinema-thumb .play-badge{
+background:rgba(18,14,22,.72);
+color:white;
+border:1px solid rgba(255,255,255,.12);
+}
+
+/* END */
+
+[data-theme="end"] .cinema-thumb .play-badge{
+background:rgba(255,255,255,.72);
+color:var(--accent);
+border:1px solid rgba(123,63,228,.18);
+}
+
+.cinema-card:hover .play-badge{
+transform:scale(1.08);
+background:var(--accent);
+color:white;
+}
+
+
+.empty-slot{
+  width: 100%; height: 100%; min-height: 160px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  border: 2px dashed var(--stone-dark); color: var(--ink-soft);
+  font-family: var(--font-mono); font-size: 11px; text-align: center; padding: 16px;
+}
+.empty-slot .icon{ font-size: 22px; }
+
+.work-body{ padding: 16px 16px 18px; }
+.work-title{ font-weight: 700; font-size: 15px; margin-bottom: 6px; }
+.work-meta{ font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); display: flex; justify-content: space-between; align-items: center; }
+.work-platform{ display: inline-flex; align-items: center; gap: 5px; padding: 3px 8px; background: var(--paper); color: var(--ink-soft); font-size: 10px; font-weight: 700; }
+
+.social-grid{ display: grid; grid-template-columns: 1fr 1fr; gap: 22px; max-width: 820px; margin: 0 auto; }
+@media (max-width: 700px){ .social-grid{ grid-template-columns: 1fr; } }
+
+.social-card{
+  background: var(--panel); padding: 28px 24px;
+  box-shadow: inset 0 4px 0 rgba(255,255,255,0.06), inset 0 -4px 0 rgba(0,0,0,0.35), 0 6px 0 var(--panel-dark);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.social-top{ display: flex; align-items: center; gap: 12px; }
+.social-icon{ width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--paper); flex-shrink: 0; color: var(--ink); }
+.social-icon.yt{ background: var(--accent); color: #fff; }
+.social-icon.ig{ background: linear-gradient(135deg, var(--gold), var(--accent)); color: #fff; }
+.social-handle{ font-weight: 700; font-size: 16px; }
+.social-sub{ font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+.social-desc{ font-size: 13.5px; color: var(--ink-soft); line-height: 1.5; }
+.social-follow{
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 10px 16px;
+  color: var(--paper);
+  background: var(--ink);
+  box-shadow: 0 4px 0 var(--shadow-block);
+}
+[data-theme="end"] .social-follow{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+
+    align-self:flex-start;
+
+    padding:10px 16px;
+
+    font-family:var(--font-mono);
+    font-size:12px;
+    font-weight:700;
+
+    background:var(--accent);
+    color:#fff;
+
+    text-decoration:none;
+
+    box-shadow:0 4px 0 var(--accent-dark);
+    transition:.2s;
+}
+
+.social-follow:hover{
+    filter:brightness(1.08);
+}
+
+.social-follow:active{
+    transform:translateY(3px);
+    box-shadow:0 1px 0 var(--accent-dark);
+}
+.social-follow:active{ transform: translateY(3px); box-shadow: 0 1px 0 var(--shadow-block); }
+
+.collab-strip{ display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; max-width: 900px; margin: 0 auto; }
+.collab-chip{
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700; padding: 12px 18px;
+  background: var(--paper); border: 3px solid var(--ink); color: var(--ink); display: flex; align-items: center; gap: 8px;
+}
+.collab-chip .dot{ width: 8px; height: 8px; background: var(--accent); }
+
+.craft{
+  background: var(--wood); padding: 56px 24px; text-align: center;
+  box-shadow: inset 0 6px 0 rgba(255,255,255,0.08), inset 0 -6px 0 rgba(0,0,0,0.4);
+}
+.craft-title{ font-family: var(--font-block); color: var(--paper); font-size: clamp(16px, 2.6vw, 22px); margin-bottom: 16px; line-height: 1.7; }
+.craft-desc{ color: var(--paper); opacity: 0.85; max-width: 480px; margin: 0 auto 28px; font-size: 15px; line-height: 1.6; }
+.craft-ctas{ display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
+footer{ text-align: center; padding: 26px; font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); background: var(--panel-dark); }
+footer a{ color: var(--accent); }
+
+.reveal{ opacity: 0; transform: translateY(18px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.in{ opacity: 1; transform: translateY(0); }
+
+@media (max-width: 760px){
+  .nav-inner{ padding: 12px 16px; flex-wrap: wrap; gap: 10px; justify-content: center; }
+  .nav-links{ width: 100%; justify-content: center; gap: 12px; flex-wrap: wrap; order: 3; }
+  .wrap{ padding: 0 16px; }
+  .hero{ padding: 56px 16px 42px; }
+  .hero-sub{ font-size: 15px; margin-bottom: 24px; }
+  .hero-ctas{ flex-direction: column; align-items: stretch; gap: 10px; }
+  .hero-ctas .btn{ width: 100%; justify-content: center; }
+  .block-title{ gap: 4px; margin-bottom: 20px; }
+  .block-letter{ padding: 10px 6px 8px; font-size: clamp(16px, 7.6vw, 30px); }
+  .section{ padding: 50px 16px; }
+  .stats-grid, .work-grid, .social-grid{ grid-template-columns: 1fr; }
+  .craft{ padding: 44px 16px; }
+}
+
+.cinema-shell::before{
+content:"";
+position:absolute;
+left:0;
+top:0;
+bottom:0;
+width:70px;
+pointer-events:none;
+z-index:2;
+}
+
+
+.cinema-shell::after{
+content:"";
+position:absolute;
+right:0;
+top:0;
+bottom:0;
+width:70px;
+pointer-events:none;
+z-index:2;
+}
+
+
+/* OBSIDIAN */
+
+[data-theme="obsidian"] .cinema-shell::before{
+background:linear-gradient(
+90deg,
+#120E16,
+transparent
+);
+}
+
+[data-theme="obsidian"] .cinema-shell::after{
+
+background:linear-gradient(
+270deg,
+#120E16,
+transparent
+);
+}
+
+/* END */
+
+[data-theme="end"] .cinema-shell::before{
+background:linear-gradient(
+90deg,
+#EDE6F5,
+transparent
+);
+}
+
+[data-theme="end"] .cinema-shell::after{
+background:linear-gradient(
+270deg,
+#EDE6F5,
+transparent
+);
+}
+
+</style>
+</head>
+<body data-theme="obsidian">
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="brand"><span class="brand-swatch"></span>ctrlshift.edit</div>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#socials">Socials</a>
+      <a href="#contact">Let's work together</a>
+    </div>
+    <button class="lever-btn" id="themeToggle" aria-label="Toggle theme">
+      <span class="lever-track"><span class="lever-knob"></span></span>
+      <span id="themeLabel">OBSIDIAN</span>
+    </button>
+  </div>
+</nav>
+
+<section class="hero">
+
+  <div class="block-title" id="heroTitle"></div>
+  <p class="hero-sub" id="heroSub"></p>
+  <div class="hero-ctas">
+    <a class="btn btn-primary" href="#work">See the work</a>
+    <a class="btn btn-outline" href="#contact">Let's work together</a>
+  </div>
+</section>
+
+<section class="section reveal" id="stats">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-tag">ACHIEVEMENTS</span>
+      <h2 class="section-title">Editor Stats</h2>
+    </div>
+    <div class="stats-grid" id="statsGrid"></div>
+  </div>
+</section>
+
+<!-- <section class="section reveal" id="work">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-tag">INVENTORY</span>
+      <h2 class="section-title">Featured edits</h2>
+      
+    </div>
+    <div class="tabs" id="tabBar"></div>
+    <div class="work-grid" id="workGrid"></div>
+  </div>
+</section> -->
+
+<!-- ================= REELS ================= -->
+
+<section class="section reveal" id="work">
+
+<div class="wrap">
+
+<div class="section-head">
+<span class="section-tag">INVENTORY</span>
+<h2 class="section-title">Featured edits</h2>
+<p class="section-desc">
+From quick cinematic reels to long-form storytelling.
+</p>
+</div>
+
+<div class="tabs" id="tabBar"></div>
+
+<div class="work-grid" id="workGrid"></div>
+
+</div>
+
+</section>
+
+
+<!-- ================= CINEMATIC STORIES ================= -->
+
+<section class="section reveal" id="longform">
+  <div class="wrap-wide">
+   <div class="cinema-header">
+     <span class="section-tag">
+      🎬 CINEMATIC STORIES
+     </span>
+
+     <h2 class="cinema-title">
+      Stories worth watching till the last frame.
+     </h2>
+
+     <p class="cinema-sub">
+      Travel films, cinematic shorts and passion projects.
+     </p>
+   </div>
+
+  <div class="cinema-shell">
+    <button class="carousel-btn left">
+     ❮
+    </button>
+  <div
+    class="cinema-row" id="cinemaRow">
+  </div>
+   <button class="carousel-btn right">
+     ❯
+   </button>
+  </div>
+</div>
+</section>
+
+<section class="section reveal" id="socials">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="section-tag">MULTIPLAYER</span>
+      <h2 class="section-title">Come hang out</h2>
+    </div>
+    <div class="social-grid" id="socialGrid"></div>
+  </div>
+</section>
+
+
+<section class="craft reveal" id="contact">
+  <h2 class="craft-title">Need a freelance editor? <br> Let's build something worth watching.</h2>
+  <p class="craft-desc" id="craftDesc"></p>
+  <div class="craft-ctas">
+    <a class="btn btn-primary" id="ctaEmail" href="#">Email me</a>
+    <a class="btn btn-outline" id="ctaIG" href="#" target="_blank" rel="noopener">DM on Instagram</a>
+  </div>
+</section>
+
+<footer>
+  Edited frame by frame — <span id="footYear"></span> <span id="footName"></span>
+</footer>
+
+<script async src="https://www.instagram.com/embed.js"></script>
+<script>
+history.scrollRestoration = "manual";
+
+window.addEventListener("load", () => {
+
+    if(location.hash){
+
+        history.replaceState(
+            null,
+            "",
+            location.pathname + location.search
+        );
+
+    }
+
+    window.scrollTo({
+        top:0,
+        behavior:"instant"
+    });
+
+});
+
+const CONFIG = {
+  name: "DRUTHI",
+  handleTag: "ctrlshift.edit",
+  tagline: "I cut raw footage into stories people actually finish watching. Travel, food, film, aesthetic edits — reels and long-form, built one block at a time.",
+
+  youtube: {
+    url: "https://youtube.com/@druthiiii?si=y5jfBNFLvG4KDpL8",
+    handle: "@druthiiii",
+    subs: "164",
+    desc: "Travel diaries, movie & food edits, and aesthetic long-form storytelling."
+  },
+  instagram: {
+    url: "https://www.instagram.com/ctrlshift.edit/",
+    handle: "@ctrlshift.edit",
+    followers: "203",
+    desc: "Reels, behind-the-scenes cuts, and quick-hit edits dropped weekly."
+  },
+
+  stats: [
+    { icon: "▶", value: "164", label: "YouTube Subscribers" },
+    { icon: "❤", value: "203", label: "Instagram Followers" },
+    { icon: "👁", value: "687k", label: "Highest Views (Live)", live: true },
+    { icon: "🎬", value: "150+", label: "Projects Edited" }
+  ],
+
+  // type: "reel" | "longform" | "collab"
+  // add a thumbnail image for a clean clickable card, or fall back to
+  // youtubeId / instagramUrl for a live embed -- see notes above
+  work: [
+    { type: "reel", title: "The winner takes it all", platform: "Instagram", views: "687K", thumbnail: "./thumbnails/winnerTakesItAll.png", youtubeId: "", instagramUrl: "https://www.instagram.com/reel/DUsynfMCR3d/" },
+    { type: "reel", title: "KGF X Dhurandhar", platform: "Instagram", views: "59.3K", thumbnail: "./thumbnails/kgfxdhur.png", youtubeId: "", instagramUrl: "https://www.instagram.com/reel/DRhQ1FmiRdr/" },
+    { type: "reel", title: "ASN - Rakshith Shetty", platform: "Instagram", views: "1K", thumbnail: "./thumbnails/ASN.png", youtubeId: "", instagramUrl: "https://www.instagram.com/reel/DbVuSavpBW_/" },
+    { type: "longform", title: "How are you, really? - A cinematic short film", platform: "YouTube", thumbnail: "./thumbnails/CinematicshortFilm.png", youtubeId: "https://youtu.be/TEhZLu8vksY?si=nhTgAbj2PuF0yT7E", instagramUrl: "" },
+    { type: "longform", title: "Kodaikanal Road trip", platform: "YouTube", thumbnail: "./thumbnails/KodaiRoadTrip.png", youtubeId: "https://youtu.be/pb0be0fNwN4?si=ci8f2LesBfuFMLxP", instagramUrl: "" },
+    { type: "reel", title: "Daily objects", platform: "Instagram", views: "10.8K", thumbnail: "./thumbnails/Dailyobjects.png", youtubeId: "", instagramUrl: "https://www.instagram.com/reel/DXeW704iYsR/" },
+    { type: "collab", title: "She asked for sunflowers", platform: "Instagram", views: "6.6K", thumbnail: "./thumbnails/Sunflowers.png", youtubeId: "", instagramUrl: "https://www.instagram.com/reel/DXrgMd6ie9q/" }
+  ],
+  email: "ctrl.shift.edit23@gmail.com"
+};
+
+const LONGFORM = CONFIG.work.filter(
+    w => w.type === "longform"
+  );
+
+/* ---------- render hero ---------- */
+const heroTitle = document.getElementById('heroTitle');
+[...CONFIG.name].forEach((ch, i) => {
+  const span = document.createElement('span');
+  span.className = 'block-letter' + (i % 3 === 1 ? ' accent' : '');
+  span.textContent = ch;
+  heroTitle.appendChild(span);
+});
+document.getElementById('heroSub').innerHTML = CONFIG.tagline + ` <strong>— ${CONFIG.handleTag}</strong>`;
+
+/* ---------- render stats ---------- */
+const statsGrid = document.getElementById('statsGrid');
+CONFIG.stats.forEach(s => {
+  const card = document.createElement('div');
+  card.className = 'stat-card';
+  card.innerHTML = `
+    <div class="stat-icon">${s.icon}</div>
+    <div class="stat-value">${s.live ? '<span class="pulse-dot"></span>' : ''}<span class="count" data-target="${s.value}">${s.value}</span></div>
+    <div class="stat-label">${s.label}</div>
+  `;
+  statsGrid.appendChild(card);
+});
+
+/* ---------- render work tabs + grid ---------- */
+const tabDefs = [
+{ key: "reel", label: "Reels" },
+{ key: "collab", label: "Collabs" }
+];
+const tabBar = document.getElementById('tabBar');
+tabDefs.forEach((t, i) => {
+  const btn = document.createElement('button');
+  // btn.className = 'tab-btn' + (i === 0 ? ' active' : '');
+
+btn.className="tab-btn";
+if(t.key==="reel"){
+btn.classList.add("active");
+}
+
+  btn.textContent = t.label;
+  btn.dataset.key = t.key;
+  // btn.addEventListener('click', () => {
+  //   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  //   btn.classList.add('active');
+  //   filterWork(t.key);
+  // });
+
+btn.onclick=()=>{
+document
+.querySelectorAll(".tab-btn")
+.forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+filterWork(t.key);
+}
+
+  tabBar.appendChild(btn);
+});
+
+/* Instagram's own embed.js turns this blockquote into the full card:
+   real thumbnail, caption, avatar, play button -- all pulled live from
+   Instagram. Note: Instagram's platform policy requires that header +
+   "View Profile" button; it can't be removed via CSS/config. */
+function instagramBlockquote(permalink){
+  return `<blockquote class="instagram-media" data-instgrm-permalink="${permalink}" data-instgrm-version="14" style="width:100%; margin:0;"></blockquote>`;
+}
+
+function buildEmbed(w){
+  // Cleanest option: a plain thumbnail image you supply yourself.
+  // No Instagram branding, no profile header -- just the image, a small
+  // play badge, and a click-through to the real post/video.
+  if(w.thumbnail){
+    const ratioClass = w.type === 'reel' ? 'ratio-9-16' : 'ratio-16-9';
+    const link = w.instagramUrl || (w.youtubeId ? `https://www.youtube.com/watch?v=${w.youtubeId}` : '#');
+    return `<div class="work-embed ${ratioClass}">
+      <a class="work-thumb-link" href="${link}" target="_blank" rel="noopener">
+        <img src="${w.thumbnail}" alt="${w.title}" loading="lazy">
+        <span class="play-badge">▶</span>
+      </a>
+    </div>`;
+  }
+  if(w.youtubeId){
+    const ratioClass = w.type === 'reel' ? 'ratio-9-16' : 'ratio-16-9';
+    return `<div class="work-embed ${ratioClass}">
+      <iframe src="https://www.youtube.com/embed/${w.youtubeId}" title="${w.title}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>`;
+  }
+  if(w.instagramUrl){
+    return `<div class="work-embed ig-embed-wrap">
+      ${instagramBlockquote(w.instagramUrl)}
+    </div>`;
+  }
+  const ratioClass = w.type === 'reel' ? 'ratio-9-16' : 'ratio-16-9';
+  return `<div class="work-embed ${ratioClass}">
+    <div class="empty-slot">
+      <span class="icon">＋</span>
+      <span>No link added yet<br>Add a thumbnail + instagramUrl (or youtubeId)<br>in CONFIG.work to show this here</span>
+    </div>
+  </div>`;
+}
+
+const workGrid = document.getElementById('workGrid');
+// CONFIG.work.forEach(w => {
+//   const card = document.createElement('div');
+//   card.className='work-card';
+//     if(w.type==="reel")
+//     card.classList.add("show");
+//   card.dataset.type = w.type;
+//   card.innerHTML = `
+//     ${buildEmbed(w)}
+//     <div class="work-body">
+//       <div class="work-title">${w.title}</div>
+//       <div class="work-meta">
+//         <span class="work-platform">${w.platform}</span>
+//         <span>${w.views} views</span>
+//       </div>
+//     </div>
+//   `;
+//   workGrid.appendChild(card);
+// });
+CONFIG.work
+.filter(w=>w.type!=="longform")
+.forEach(w=>{
+
+const card=document.createElement("div");
+card.className="work-card";
+
+if(w.type==="reel")
+card.classList.add("show");
+card.dataset.type=w.type;
+
+card.innerHTML=`
+${buildEmbed(w)}
+
+<div class="work-body">
+
+<div class="work-title">
+${w.title}
+</div>
+
+<div class="work-meta">
+
+<span class="work-platform">
+${w.platform}
+</span>
+<span>
+${w.views} views
+</span>
+</div>
+</div>
+`;
+workGrid.appendChild(card);
+});
+
+const cinemaRow=document.getElementById("cinemaRow");
+
+LONGFORM.forEach(video=>{
+
+const card=document.createElement("div");
+
+card.className="cinema-card";
+
+card.innerHTML=`
+
+<a
+href="${video.youtubeId}"
+target="_blank"
+class="work-thumb-link">
+
+<div class="cinema-thumb">
+
+<img
+src="${video.thumbnail}"
+alt="${video.title}">
+
+<span class="play-badge">
+
+▶
+
+</span>
+
+</div>
+
+</a>
+
+<div class="cinema-body">
+<div class="cinema-title">
+${video.title}
+</div>
+
+<div class="cinema-meta">
+YouTube
+</div>
+</div>
+`;
+cinemaRow.appendChild(card);
+});
+
+function filterWork(key){
+document
+.querySelectorAll(".work-card")
+.forEach(card=>{
+card.classList.toggle(
+"show",
+card.dataset.type===key
+);
+});
+}
+
+/* Instagram's embed.js scans the page once on load. Since we insert
+   blockquotes dynamically, we call .process() ourselves -- retrying
+   a few times in case the script is still loading. */
+function processInstagramEmbeds(retriesLeft = 12){
+  if(window.instgrm && window.instgrm.Embeds){
+    window.instgrm.Embeds.process();
+    return;
+  }
+  if(retriesLeft > 0){
+    setTimeout(() => processInstagramEmbeds(retriesLeft - 1), 300);
+  }
+}
+processInstagramEmbeds();
+window.addEventListener('load', () => processInstagramEmbeds());
+
+/* ---------- render socials ---------- */
+const socialGrid = document.getElementById('socialGrid');
+socialGrid.innerHTML = `
+  <div class="social-card">
+    <div class="social-top">
+      <div class="social-icon yt">▶</div>
+      <div>
+        <div class="social-handle">${CONFIG.youtube.handle}</div>
+        <div class="social-sub">${CONFIG.youtube.subs} subscribers</div>
+      </div>
+    </div>
+    <div class="social-desc">${CONFIG.youtube.desc}</div>
+    <a class="social-follow" href="${CONFIG.youtube.url}" target="_blank" rel="noopener">Subscribe on YouTube</a>
+  </div>
+  <div class="social-card">
+    <div class="social-top">
+      <div class="social-icon ig">📷</div>
+      <div>
+        <div class="social-handle">${CONFIG.instagram.handle}</div>
+        <div class="social-sub">${CONFIG.instagram.followers} followers</div>
+      </div>
+    </div>
+    <div class="social-desc">${CONFIG.instagram.desc}</div>
+    <a class="social-follow" href="${CONFIG.instagram.url}" target="_blank" rel="noopener">Follow on Instagram</a>
+  </div>
+`;
+
+/* ---------- contact section ---------- */
+document.getElementById('craftDesc').textContent = `Open for reels, long-form edits, and brand collabs. Usually replies within a day or two.`;
+document.getElementById('ctaEmail').href = `mailto:${CONFIG.email}`;
+document.getElementById('ctaIG').href = CONFIG.instagram.url;
+document.getElementById('footYear').textContent = new Date().getFullYear();
+document.getElementById('footName').textContent = CONFIG.handleTag;
+
+/* ---------- theme toggle ---------- */
+const themeToggle = document.getElementById('themeToggle');
+const themeLabel = document.getElementById('themeLabel');
+let theme = 'obsidian';
+themeToggle.addEventListener('click', () => {
+  theme = theme === 'obsidian' ? 'end' : 'obsidian';
+  document.body.setAttribute('data-theme', theme);
+  themeLabel.textContent = theme === 'obsidian' ? 'OBSIDIAN' : 'THE END';
+});
+
+/* ---------- count-up animation for stats ---------- */
+function animateCount(el){
+  const raw = el.dataset.target;
+  const match = raw.match(/^([\d.]+)([A-Za-z+]*)$/);
+  if(!match){ return; }
+  const end = parseFloat(match[1]);
+  const suffix = match[2];
+  const duration = 1200;
+  const start = performance.now();
+  function tick(now){
+    const p = Math.min(1, (now - start) / duration);
+    const eased = 1 - Math.pow(1 - p, 3);
+    const val = (end * eased);
+    el.textContent = (Number.isInteger(end) ? Math.round(val) : val.toFixed(1)) + suffix;
+    if(p < 1){ requestAnimationFrame(tick); }
+  }
+  requestAnimationFrame(tick);
+}
+
+/* ---------- scroll reveal + trigger counters once ---------- */
+const revealEls = document.querySelectorAll('.reveal');
+const statObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      entry.target.classList.add('in');
+      if(entry.target.id === 'stats'){
+        document.querySelectorAll('.count').forEach(animateCount);
+      }
+      statObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.2 });
+revealEls.forEach(el => statObserver.observe(el));
+
+const row=document.getElementById("cinemaRow");
+
+document
+.querySelector(".carousel-btn.left")
+.onclick=()=>{
+
+row.scrollBy({
+
+left:-420,
+
+behavior:"smooth"
+
+});
+
+};
+
+document
+.querySelector(".carousel-btn.right")
+.onclick=()=>{
+
+row.scrollBy({
+
+left:420,
+
+behavior:"smooth"
+
+});
+
+};
+</script>
+</body>
+</html>
